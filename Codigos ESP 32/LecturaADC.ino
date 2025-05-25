@@ -15,16 +15,16 @@ void setup() {
     while (1);  // Detener la ejecución si no se encuentra el ADS1114
   }
 
-  // Configurar el ADC para usar un rango de ±2.048V
-  ads.setGain(GAIN_TWO);  // Establecer la ganancia para ±2.048V
+  // Configurar el ADC para usar un rango de ±1.024V
+  ads.setGain(GAIN_FOUR);  // Establecer la ganancia para ±1.024V
 }
 
 void loop() {
   // Leer el valor del canal 0 (entrada simple de un solo extremo)
   int16_t adc0 = ads.readADC_SingleEnded(0);
   
-  // Convertir el valor digital a voltaje (usando el rango de ±2.048V)
-  float voltaje = (adc0 / 32768.0) * 2.048;
+  // Convertir el valor digital a voltaje (usando el rango de ±1.024V)
+  float voltaje = (adc0 / 32768.0) * 1.024;
   
   // Mostrar el voltaje calculado en el monitor serial
   Serial.print("Voltaje del canal 0: ");
