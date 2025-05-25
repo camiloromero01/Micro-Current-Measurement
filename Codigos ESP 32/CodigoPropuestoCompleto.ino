@@ -112,8 +112,26 @@ float readVoltage() {
   int16_t adcValue = ads.readADC_SingleEnded(0); // Leer canal 0 (ajusta según tu conexión)
   float voltage = ads.computeVolts(adcValue);    // Convertir a voltios usando la ganancia configurada
 
-  // Corregir offset de 9mV
-  voltage -= 0.009; // Restar 9mV
+  // Corregir offset dependiendo del modo
+  if (modoActual == "MILI") {
+    voltage -= 0.0089; // Restar 8.9 mV para MILI
+  } else if (modoActual == "MICRO") {
+    voltage -= 0.0099; // Restar 9.9 mV para MICRO
+  } else if (modoActual == "AUTO") {
+    // En modo AUTO, el offset depende del modo dinámico seleccionado en voltageToCurrent
+    // Leer el voltaje primero sin offset para determinar el modo
+    float tempVoltage = voltage;
+    float percentage = tempVoltage / 1.0;
+    float current = percentage * 100.0; // Calcular como MILI primero
+    if (current < 1.0) {
+      modoActual = "MICRO"; // Cambiar a MICRO si es menor a 1mA
+      voltage -= 0.0099;    // Aplicar offset de 9.9 mV para MICRO
+    } else {
+      modoActual = "MILI";  // Usar MILI
+      voltage -= 0.0089;    // Aplicar offset de 8.9 mV para MILI
+    }
+  }
+
   if (voltage < 0) voltage = 0; // Evitar valores negativos
 
   return voltage;
